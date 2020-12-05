@@ -10,7 +10,8 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     overflow: "hidden",
     display: "flex",
-    backgroundColor: theme.palette.background.default,
+    // backgroundColor: theme.palette.background.default,
+    backgroundColor: theme.palette.background.dark,
   },
   wrapper: {
     flex: "1 1 auto",
