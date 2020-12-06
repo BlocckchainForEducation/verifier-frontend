@@ -8,6 +8,10 @@ const appSlice = createSlice({
       certificate: { address: "", versions: [{ txid: "", timestamp: 1234, active: "", plain: "" }] },
       subjects: [{ address: "", versions: [{ txid: "", timestamp: 1234, active: "", plain: "" }] }, {}],
     },
+    offChainCheckResult: {
+      sumCredit: 0,
+      CPA: 0,
+    },
   },
   reducers: {
     setDecodedData: (state, action) => {
@@ -27,8 +31,12 @@ const appSlice = createSlice({
         version.timestamp = action.payload.timestamp;
       }
     },
+    setOffChainCheckResult: (state, action) => {
+      state.offChainCheckResult.sumCredit = action.sumCredit;
+      state.offChainCheckResult.CPA = action.payload.CPA;
+    },
   },
 });
 
 export default appSlice.reducer;
-export const { setDecodedData, setCertIntegrityCheckResult, setSubjectIntegrityCheckResult } = appSlice.actions;
+export const { setDecodedData, setCertIntegrityCheckResult, setSubjectIntegrityCheckResult, setOffChainCheckResult } = appSlice.actions;
