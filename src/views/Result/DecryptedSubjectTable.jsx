@@ -73,11 +73,11 @@ export default function DecryptedSubjectTable(props) {
                 <TableCell>Kì học</TableCell>
                 <TableCell>Mã HP</TableCell>
                 <TableCell>Tên HP</TableCell>
-                <TableCell>Số TC</TableCell>
+                <TableCell>Số tín chỉ</TableCell>
                 <TableCell>Điểm GK</TableCell>
                 <TableCell>Điểm CK</TableCell>
-                <TableCell>Điểm chữ</TableCell>
-                <TableCell>Điểm hệ 4</TableCell>
+                <TableCell>Mã GV</TableCell>
+                <TableCell>Tên GV</TableCell>
                 <TableCell>Txid</TableCell>
                 <TableCell>Tính toàn vẹn</TableCell>
                 <TableCell>Timestamp</TableCell>
@@ -89,13 +89,13 @@ export default function DecryptedSubjectTable(props) {
                   {subject.versions.map((version, versionIndex) => (
                     <TableRow key={versionIndex}>
                       <TableCell>{version.plain.semester}</TableCell>
-                      <TableCell>{version.plain.codename}</TableCell>
-                      <TableCell>{version.plain.name}</TableCell>
-                      <TableCell>{version.plain.credit}</TableCell>
+                      <TableCell>{version.plain.subject.subjectId}</TableCell>
+                      <TableCell>{version.plain.subject.name}</TableCell>
+                      <TableCell>{version.plain.subject.credit}</TableCell>
                       <TableCell>{version.plain.halfSemesterPoint}</TableCell>
                       <TableCell>{version.plain.finalSemesterPoint}</TableCell>
-                      <TableCell>{version.plain.rank}</TableCell>
-                      <TableCell>{version.plain.pointBase4}</TableCell>
+                      <TableCell>{version.plain.teacherId}</TableCell>
+                      <TableCell>{version.plain.teacherName}</TableCell>
                       <TableCell>{version.txid.slice(0, 6) + "..." + version.txid.slice(-6)}</TableCell>
                       <TableCell align="center">
                         {version.valid === undefined && <CircularProgress size="1rem" />}
