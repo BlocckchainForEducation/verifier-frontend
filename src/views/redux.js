@@ -5,6 +5,7 @@ const appSlice = createSlice({
   initialState: {
     decodedData: {
       publicKeyHex: "",
+      publicKeyHex65: "",
       certificate: { address: "", versions: [{ txid: "", timestamp: 1234, active: "", plain: "" }] },
       subjects: [{ address: "", versions: [{ txid: "", timestamp: 1234, active: "", plain: "" }] }, {}],
     },

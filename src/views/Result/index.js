@@ -1,4 +1,4 @@
-import { Container, makeStyles } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import View from "../../shared/View";
@@ -26,7 +26,7 @@ export default function Result(props) {
   function runOffChainCheck() {
     let sumCredit = 0;
     let sumPoint = 0;
-    subjects.map((subject, index) => {
+    subjects.forEach((subject, index) => {
       const copyVersions = [...subject.versions];
       copyVersions.sort((a, b) => b.timestamp - a.timestamp);
       const newestVersion = copyVersions[0];

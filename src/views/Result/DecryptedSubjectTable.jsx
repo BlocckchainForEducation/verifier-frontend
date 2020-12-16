@@ -31,6 +31,7 @@ const useStyles = makeStyles((theme) => ({
 export default function DecryptedSubjectTable(props) {
   const cls = useStyles();
   const subjects = useSelector((state) => state.appSlice.decodedData.subjects);
+  const publicKeyHex65 = useSelector((state) => state.appSlice.decodedData.publicKeyHex65);
   const dp = useDispatch();
 
   useEffect(() => {
@@ -43,7 +44,7 @@ export default function DecryptedSubjectTable(props) {
         const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/check-integrity`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ address: subject.address, ...subjectVersion }),
+          body: JSON.stringify({ txid: subjectVersion.txid, plain: subjectVersion.plain, publicKeyHex65 }),
         });
         const result = await response.json();
         if (!response.ok) {

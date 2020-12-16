@@ -17,6 +17,7 @@ const useStyles = makeStyles((theme) => ({
 export default function DecryptedCertInfo(props) {
   const cls = useStyles();
   const certificate = useSelector((state) => state.appSlice.decodedData.certificate.versions[0]);
+  const publicKeyHex65 = useSelector((state) => state.appSlice.decodedData.publicKeyHex65);
   const [certPart1, certPart2] = separateCertificate(certificate.plain);
   const dp = useDispatch();
 
@@ -28,7 +29,7 @@ export default function DecryptedCertInfo(props) {
     const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/check-integrity`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(certificate),
+      body: JSON.stringify({ txid: certificate.txid, plain: certificate.plain, publicKeyHex65 }),
     });
     const result = await response.json();
     if (!response.ok) {
