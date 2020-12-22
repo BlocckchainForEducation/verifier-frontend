@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setSubjectIntegrityCheckResult } from "../redux";
 import CheckIcon from "@material-ui/icons/Check";
 import CloseIcon from "@material-ui/icons/Close";
+import { getLinkFromTxid } from "../../utils/utils";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -31,7 +32,9 @@ const useStyles = makeStyles((theme) => ({
 export default function DecryptedSubjectTable(props) {
   const cls = useStyles();
   const subjects = useSelector((state) => state.appSlice.decodedData.subjects);
-  const publicKeyHex65 = useSelector((state) => state.appSlice.decodedData.publicKeyHex65);
+  const publicKeyHex65 = useSelector(
+    (state) => state.appSlice.decodedData.publicKeyHex65
+  );
   const dp = useDispatch();
 
   useEffect(() => {
@@ -41,17 +44,30 @@ export default function DecryptedSubjectTable(props) {
   async function checkSubjectsIntegrity() {
     subjects.forEach(async (subject, subjectIndex) => {
       subject.versions.map(async (subjectVersion, versionIndex) => {
-        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/check-integrity`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ txid: subjectVersion.txid, plain: subjectVersion.plain, publicKeyHex65 }),
-        });
+        const response = await fetch(
+          `${process.env.REACT_APP_SERVER_URL}/check-integrity`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              txid: subjectVersion.txid,
+              plain: subjectVersion.plain,
+              publicKeyHex65,
+            }),
+          }
+        );
         const result = await response.json();
         if (!response.ok) {
           console.log(result);
         } else {
           // result: {valid: true/false, timestamp: "12341234"/msg: "asdfasdf"}
-          dp(setSubjectIntegrityCheckResult({ subjectIndex, versionIndex, ...result }));
+          dp(
+            setSubjectIntegrityCheckResult({
+              subjectIndex,
+              versionIndex,
+              ...result,
+            })
+          );
         }
       });
     });
@@ -74,7 +90,7 @@ export default function DecryptedSubjectTable(props) {
                 <TableCell>Kì học</TableCell>
                 <TableCell>Mã HP</TableCell>
                 <TableCell>Tên HP</TableCell>
-                <TableCell>Số tín chỉ</TableCell>
+                <TableCell>Số TC</TableCell>
                 <TableCell>Điểm GK</TableCell>
                 <TableCell>Điểm CK</TableCell>
                 <TableCell>Mã GV</TableCell>
@@ -97,11 +113,18 @@ export default function DecryptedSubjectTable(props) {
                       <TableCell>{version.plain.finalSemesterPoint}</TableCell>
                       <TableCell>{version.plain.teacherId}</TableCell>
                       <TableCell>{version.plain.teacherName}</TableCell>
-                      <TableCell>{version.txid.slice(0, 6) + "..." + version.txid.slice(-6)}</TableCell>
+                      {/* <TableCell>{version.txid.slice(0, 6) + "..." + version.txid.slice(-6)}</TableCell> */}
+                      <TableCell>{getLinkFromTxid(version.txid)}</TableCell>
                       <TableCell align="center">
-                        {version.valid === undefined && <CircularProgress size="1rem" />}
-                        {version.valid === true && <CheckIcon color="primary" />}
-                        {version.valid === false && <CloseIcon color="secondary" />}
+                        {version.valid === undefined && (
+                          <CircularProgress size="1rem" />
+                        )}
+                        {version.valid === true && (
+                          <CheckIcon color="primary" />
+                        )}
+                        {version.valid === false && (
+                          <CloseIcon color="secondary" />
+                        )}
                       </TableCell>
                       <TableCell>
                         {version.valid === true && version.timestamp}
