@@ -1,7 +1,7 @@
 import { createMuiTheme, colors } from "@material-ui/core";
 import shadows from "./shadows";
 import typography from "./typography";
-
+import cyan from "@material-ui/core/colors/cyan";
 const theme = createMuiTheme({
   palette: {
     background: {
@@ -9,6 +9,7 @@ const theme = createMuiTheme({
       default: colors.common.white,
       paper: colors.common.white,
     },
+    primary: cyan,
     // primary: {
     //   main: colors.indigo[500]
     // },
