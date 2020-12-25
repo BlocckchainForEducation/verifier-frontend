@@ -61,13 +61,15 @@ export default function DecryptedSubjectTable(props) {
           console.log(result);
         } else {
           // result: {valid: true/false, timestamp: "12341234"/msg: "asdfasdf"}
-          dp(
-            setSubjectIntegrityCheckResult({
-              subjectIndex,
-              versionIndex,
-              ...result,
-            })
-          );
+          setTimeout(() => {
+            dp(
+              setSubjectIntegrityCheckResult({
+                subjectIndex,
+                versionIndex,
+                ...result,
+              })
+            );
+          }, Math.floor(Math.random() * 2500 + 200));
         }
       });
     });

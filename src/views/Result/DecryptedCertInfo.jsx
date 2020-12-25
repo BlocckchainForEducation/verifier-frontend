@@ -64,7 +64,9 @@ export default function DecryptedCertInfo(props) {
       console.log(result);
     } else {
       // result: {valid: true/false, timestamp: "12341234"}
-      dp(setCertIntegrityCheckResult(result));
+      setTimeout(() => {
+        dp(setCertIntegrityCheckResult(result));
+      }, 5000);
     }
   }
 
