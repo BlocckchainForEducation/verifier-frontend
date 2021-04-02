@@ -43,7 +43,7 @@ export default function Result(props) {
     <View title="Kết quả xác thực">
       <div className={cls.root}>
         <DecryptedCertInfo></DecryptedCertInfo>
-        <DecryptedSubjectTable></DecryptedSubjectTable>
+        {/* <DecryptedSubjectTable></DecryptedSubjectTable> */}
       </div>
     </View>
   );

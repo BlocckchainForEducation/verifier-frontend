@@ -39,7 +39,9 @@ export default function DecryptedCertInfo(props) {
 
   const certVersionsOnBKC = useSelector((state) => state.appSlice.eduProgramOnBKC.certificate.versions);
   const correspondingCertVersionOnBKC = certVersionsOnBKC.find((version) => version.txid === newestCertVersionByToken.txid);
-  const newestCertVersionOnBKC = certVersionsOnBKC.sort((a, b) => a.timestamp - b.timestamp);
+  // console.log({ newestCertVersionByToken, correspondingCertVersionOnBKC });
+  // TODO: check if this sort is right?
+  const newestCertVersionOnBKC = certVersionsOnBKC.sort((a, b) => a.timestamp - b.timestamp)[0];
 
   const [isIntegrity, setIsIntegrity] = useState(null);
   const [isOutDate, setIsOutDate] = useState(null);
@@ -64,6 +66,7 @@ export default function DecryptedCertInfo(props) {
   }
 
   function checkOutOfDate() {
+    console.log({ tokenTimeStamp: newestCertVersionByToken.timestamp, onbkctimestamp: newestCertVersionOnBKC.timestamp });
     setIsOutDate(newestCertVersionByToken.timestamp !== newestCertVersionOnBKC.timestamp);
   }
 
@@ -78,8 +81,8 @@ export default function DecryptedCertInfo(props) {
           {isIntegrity === true && <CheckIcon color="primary" />}
           {isIntegrity === false && <CloseIcon color="secondary" />}
           {isOutDate === null && <CircularProgress size="1.5rem" />}
-          {isOutDate === true && <CheckIcon color="primary" />}
-          {isOutDate === false && <CloseIcon color="secondary" />}
+          {isOutDate === false && <CheckIcon color="primary" />}
+          {isOutDate === true && <CloseIcon color="secondary" />}
         </Box>
         <Divider></Divider>
         <Grid container>
