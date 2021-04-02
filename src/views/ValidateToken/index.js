@@ -4,7 +4,7 @@ import { useSnackbar } from "notistack";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { ERR_TOP_CENTER } from "../../utils/snackbar-utils";
-import { setDecodedData } from "../redux";
+import { setDecodedData, setDecodedTokenAndEduProgramOnBKC } from "../redux";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -29,32 +29,30 @@ export default function Verify(props) {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
-  // const [tokenValue, setTokenValue] = useState("");
-
-  // function hdChange(e) {
-  //   setTokenValue(e.target.value);
-  // }
-
-  // async function hdKeyPress(e) {
-  //   if (e.key === "Enter") {
-  //   }
-  // }
-
   async function hdPasteToken(e) {
     const token = e.clipboardData.getData("Text");
     try {
-      const response = await axios.post("/decode-token", { token });
-      dp(setDecodedData(response.data));
-      navigate("/ket-qua");
+      const decodeTokenResponse = await axios.post("/decode-token", { token });
+      try {
+        const onBKCDataResponse = await axios.get("/student/data/" + decodeTokenResponse.data.publicKeyHex);
+        const onBKCEduProgram = onBKCDataResponse.data.find(
+          (eduprogram) => eduprogram.certificate.versions[0].portfolio_id === decodeTokenResponse.data.certificate.versions[0].portfolio_id
+        );
+        dp(setDecodedTokenAndEduProgramOnBKC({ decodedToken: decodeTokenResponse.data, eduProgramOnBKC: onBKCEduProgram }));
+        navigate("/ket-qua");
+      } catch (error) {
+        console.error(error);
+        error.response && enqueueSnackbar(JSON.stringify(error.response.data), ERR_TOP_CENTER);
+      }
     } catch (error) {
-      enqueueSnackbar("Token không hợp lệ: " + JSON.stringify(error.response.data), ERR_TOP_CENTER);
+      console.error(error);
+      error.response && enqueueSnackbar("Token không hợp lệ: " + JSON.stringify(error.response.data), ERR_TOP_CENTER);
     }
   }
 
   return (
     <div className={cls.root}>
       <div className={cls.box}>
-        {/* <TextField label="Token" fullWidth autoFocus onPaste={hdPasteToken} onChange={hdChange} onKeyPress={hdKeyPress}></TextField> */}
         <TextField label="Token" fullWidth autoFocus onPaste={hdPasteToken}></TextField>
       </div>
     </div>

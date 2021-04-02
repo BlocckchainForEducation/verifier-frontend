@@ -2,16 +2,16 @@ import React from "react";
 import { Navigate } from "react-router-dom";
 import MainLayout from "src/layouts/MainLayout";
 import NotFoundView from "src/shared/NotFoundView";
-import Verify from "src/views/ValidateToken";
-import Result from "src/views/VerifyData";
+import ValidateToken from "src/views/ValidateToken";
+import VerifyData from "src/views/VerifyData";
 
 const routes = [
   {
     path: "/",
     element: <MainLayout />,
     children: [
-      { path: "xac-thuc", element: <Verify /> },
-      { path: "ket-qua", element: <Result /> },
+      { path: "xac-thuc", element: <ValidateToken /> },
+      { path: "ket-qua", element: <VerifyData /> },
       { path: "404", element: <NotFoundView /> },
       { path: "/", element: <Navigate to="xac-thuc" /> },
       { path: "*", element: <Navigate to="/404" /> },

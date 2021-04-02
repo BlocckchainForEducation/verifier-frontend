@@ -12,7 +12,7 @@ import {
   TableRow,
   Typography,
 } from "@material-ui/core";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setCertIntegrityCheckResult } from "../redux";
 import CheckIcon from "@material-ui/icons/Check";
@@ -33,25 +33,38 @@ const useStyles = makeStyles((theme) => ({
 
 export default function DecryptedCertInfo(props) {
   const cls = useStyles();
-  const newestCertVersion = useSelector((state) => state.appSlice.decodedData.certificate.versions[0]);
-  const [certPart1, certPart2] = separateCertificate(newestCertVersion.plain, newestCertVersion.txid);
-  const dp = useDispatch();
+  // TODO: check if cert versions is sorted
+  const newestCertVersionByToken = useSelector((state) => state.appSlice.decodedToken.certificate.versions[0]);
+  const [certPart1, certPart2] = separateCertificate(newestCertVersionByToken.plain, newestCertVersionByToken.txid);
+
+  const certVersionsOnBKC = useSelector((state) => state.appSlice.eduProgramOnBKC.certificate.versions);
+  const correspondingCertVersionOnBKC = certVersionsOnBKC.find((version) => version.txid === newestCertVersionByToken.txid);
+  const newestCertVersionOnBKC = certVersionsOnBKC.sort((a, b) => a.timestamp - b.timestamp);
+
+  const [isIntegrity, setIsIntegrity] = useState(null);
+  const [isOutDate, setIsOutDate] = useState(null);
+
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
     checkIntegrity();
+    checkOutOfDate();
   }, []);
 
   async function checkIntegrity() {
     try {
       const response = await axios.post("/check-integrity", {
-        txid: newestCertVersion.txid,
-        plain: newestCertVersion.plain,
+        hash: correspondingCertVersionOnBKC.hash,
+        plain: newestCertVersionByToken.plain,
       });
-      dp(setCertIntegrityCheckResult(response.data));
+      setIsIntegrity(response.data.isIntegrity);
     } catch (error) {
       enqueueSnackbar(JSON.stringify(error.response.data), ERR_TOP_CENTER);
     }
+  }
+
+  function checkOutOfDate() {
+    setIsOutDate(newestCertVersionByToken.timestamp !== newestCertVersionOnBKC.timestamp);
   }
 
   return (
@@ -61,9 +74,12 @@ export default function DecryptedCertInfo(props) {
           <Typography variant="h4" className={cls.typo}>
             Thông tin bằng cấp
           </Typography>
-          {newestCertVersion.valid === undefined && <CircularProgress size="1.5rem" />}
-          {newestCertVersion.valid === true && <CheckIcon color="primary" />}
-          {newestCertVersion.valid === false && <CloseIcon color="secondary" />}
+          {isIntegrity === null && <CircularProgress size="1.5rem" />}
+          {isIntegrity === true && <CheckIcon color="primary" />}
+          {isIntegrity === false && <CloseIcon color="secondary" />}
+          {isOutDate === null && <CircularProgress size="1.5rem" />}
+          {isOutDate === true && <CheckIcon color="primary" />}
+          {isOutDate === false && <CloseIcon color="secondary" />}
         </Box>
         <Divider></Divider>
         <Grid container>

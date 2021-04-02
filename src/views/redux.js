@@ -14,12 +14,13 @@ const appSlice = createSlice({
     },
   },
   reducers: {
-    setDecodedData: (state, action) => {
-      state.decodedData = action.payload;
+    setDecodedTokenAndEduProgramOnBKC: (state, action) => {
+      state.decodedToken = action.payload.decodedToken;
+      state.eduProgramOnBKC = action.payload.eduProgramOnBKC;
     },
+
     setCertIntegrityCheckResult: (state, action) => {
       state.decodedData.certificate.versions[0].valid = action.payload.valid;
-      // state.decodedData.certificate.versions[0].timestamp = action.payload.timestamp;
     },
     setSubjectIntegrityCheckResult: (state, action) => {
       const { subjectIndex, versionIndex, valid } = action.payload;
@@ -39,4 +40,9 @@ const appSlice = createSlice({
 });
 
 export default appSlice.reducer;
-export const { setDecodedData, setCertIntegrityCheckResult, setSubjectIntegrityCheckResult, setOffChainCheckResult } = appSlice.actions;
+export const {
+  setCertIntegrityCheckResult,
+  setSubjectIntegrityCheckResult,
+  setOffChainCheckResult,
+  setDecodedTokenAndEduProgramOnBKC,
+} = appSlice.actions;
