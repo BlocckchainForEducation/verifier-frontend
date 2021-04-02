@@ -40,14 +40,17 @@ export default function Verify(props) {
 
   async function hdPasteToken(e) {
     const token = e.clipboardData.getData("Text");
-    const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/decode-token`, {
+    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/decode-token`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ token }),
     });
     const result = await response.json();
     if (!response.ok) {
-      enqueueSnackbar("Token không hợp lệ: " + JSON.stringify(result), { variant: "error", anchorOrigin: { vertical: "top", horizontal: "center" } });
+      enqueueSnackbar("Token không hợp lệ: " + JSON.stringify(result), {
+        variant: "error",
+        anchorOrigin: { vertical: "top", horizontal: "center" },
+      });
     } else {
       dp(setDecodedData(result));
       navigate("/ket-qua");

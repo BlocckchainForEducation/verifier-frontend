@@ -30,16 +30,9 @@ const useStyles = makeStyles((theme) => ({
 
 export default function DecryptedCertInfo(props) {
   const cls = useStyles();
-  const certificate = useSelector(
-    (state) => state.appSlice.decodedData.certificate.versions[0]
-  );
-  const publicKeyHex65 = useSelector(
-    (state) => state.appSlice.decodedData.publicKeyHex65
-  );
-  const [certPart1, certPart2] = separateCertificate(
-    certificate.plain,
-    certificate
-  );
+  const certificate = useSelector((state) => state.appSlice.decodedData.certificate.versions[0]);
+  const publicKeyHex65 = useSelector((state) => state.appSlice.decodedData.publicKeyHex65);
+  const [certPart1, certPart2] = separateCertificate(certificate.plain, certificate);
   const dp = useDispatch();
 
   useEffect(() => {
@@ -47,18 +40,15 @@ export default function DecryptedCertInfo(props) {
   }, []);
 
   async function checkIntegrity() {
-    const response = await fetch(
-      `${process.env.REACT_APP_SERVER_URL}/check-integrity`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          txid: certificate.txid,
-          plain: certificate.plain,
-          publicKeyHex65,
-        }),
-      }
-    );
+    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/check-integrity`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        txid: certificate.txid,
+        plain: certificate.plain,
+        publicKeyHex65,
+      }),
+    });
     const result = await response.json();
     if (!response.ok) {
       console.log(result);
@@ -77,9 +67,7 @@ export default function DecryptedCertInfo(props) {
           <Typography variant="h4" className={cls.typo}>
             Thông tin bằng cấp
           </Typography>
-          {certificate.valid === undefined && (
-            <CircularProgress size="1.5rem" />
-          )}
+          {certificate.valid === undefined && <CircularProgress size="1.5rem" />}
           {certificate.valid === true && <CheckIcon color="primary" />}
           {certificate.valid === false && <CloseIcon color="secondary" />}
         </Box>

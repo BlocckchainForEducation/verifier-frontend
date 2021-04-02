@@ -32,9 +32,7 @@ const useStyles = makeStyles((theme) => ({
 export default function DecryptedSubjectTable(props) {
   const cls = useStyles();
   const subjects = useSelector((state) => state.appSlice.decodedData.subjects);
-  const publicKeyHex65 = useSelector(
-    (state) => state.appSlice.decodedData.publicKeyHex65
-  );
+  const publicKeyHex65 = useSelector((state) => state.appSlice.decodedData.publicKeyHex65);
   const dp = useDispatch();
 
   useEffect(() => {
@@ -44,18 +42,15 @@ export default function DecryptedSubjectTable(props) {
   async function checkSubjectsIntegrity() {
     subjects.forEach(async (subject, subjectIndex) => {
       subject.versions.map(async (subjectVersion, versionIndex) => {
-        const response = await fetch(
-          `${process.env.REACT_APP_SERVER_URL}/check-integrity`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              txid: subjectVersion.txid,
-              plain: subjectVersion.plain,
-              publicKeyHex65,
-            }),
-          }
-        );
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/check-integrity`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            txid: subjectVersion.txid,
+            plain: subjectVersion.plain,
+            publicKeyHex65,
+          }),
+        });
         const result = await response.json();
         if (!response.ok) {
           console.log(result);
@@ -118,15 +113,9 @@ export default function DecryptedSubjectTable(props) {
                       {/* <TableCell>{version.txid.slice(0, 6) + "..." + version.txid.slice(-6)}</TableCell> */}
                       <TableCell>{getLinkFromTxid(version.txid)}</TableCell>
                       <TableCell align="center">
-                        {version.valid === undefined && (
-                          <CircularProgress size="1rem" />
-                        )}
-                        {version.valid === true && (
-                          <CheckIcon color="primary" />
-                        )}
-                        {version.valid === false && (
-                          <CloseIcon color="secondary" />
-                        )}
+                        {version.valid === undefined && <CircularProgress size="1rem" />}
+                        {version.valid === true && <CheckIcon color="primary" />}
+                        {version.valid === false && <CloseIcon color="secondary" />}
                       </TableCell>
                       <TableCell>
                         {version.valid === true && version.timestamp}

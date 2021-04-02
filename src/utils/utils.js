@@ -1,7 +1,7 @@
 import { Link } from "@material-ui/core";
 
 function getHost() {
-  const url = process.env.REACT_APP_SERVER_URL;
+  const url = process.env.REACT_APP_BACKEND_URL;
   const parts = url.split(":");
   parts.pop();
   const host = parts.join(":");
@@ -11,10 +11,7 @@ function getHost() {
 
 function getLinkFromTxid(txid) {
   return (
-    <Link
-      target="_blank"
-      href={`${process.env.REACT_APP_EXPLORER_URL}/#/transactions/${txid}`}
-    >
+    <Link target="_blank" href={`${process.env.REACT_APP_EXPLORER_URL}/#/transactions/${txid}`}>
       {txid.slice(0, 20)}...
     </Link>
   );
