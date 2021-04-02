@@ -2,8 +2,8 @@ import React from "react";
 import { Navigate } from "react-router-dom";
 import MainLayout from "src/layouts/MainLayout";
 import NotFoundView from "src/shared/NotFoundView";
-import Verify from "src/views/Verify";
-import Result from "src/views/Result";
+import Verify from "src/views/ValidateToken";
+import Result from "src/views/VerifyData";
 
 const routes = [
   {

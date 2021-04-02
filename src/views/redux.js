@@ -5,7 +5,6 @@ const appSlice = createSlice({
   initialState: {
     decodedData: {
       publicKeyHex: "",
-      publicKeyHex65: "",
       certificate: { address: "", versions: [{ txid: "", timestamp: 1234, active: "", plain: "" }] },
       subjects: [{ address: "", versions: [{ txid: "", timestamp: 1234, active: "", plain: "" }] }, {}],
     },
@@ -20,7 +19,7 @@ const appSlice = createSlice({
     },
     setCertIntegrityCheckResult: (state, action) => {
       state.decodedData.certificate.versions[0].valid = action.payload.valid;
-      state.decodedData.certificate.versions[0].timestamp = action.payload.timestamp;
+      // state.decodedData.certificate.versions[0].timestamp = action.payload.timestamp;
     },
     setSubjectIntegrityCheckResult: (state, action) => {
       const { subjectIndex, versionIndex, valid } = action.payload;

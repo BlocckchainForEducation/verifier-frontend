@@ -18,6 +18,9 @@ import { setCertIntegrityCheckResult } from "../redux";
 import CheckIcon from "@material-ui/icons/Check";
 import CloseIcon from "@material-ui/icons/Close";
 import { getLinkFromTxid } from "src/utils/utils";
+import axios from "axios";
+import { ERR_TOP_CENTER } from "../../utils/snackbar-utils";
+import { useSnackbar } from "notistack";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -30,33 +33,24 @@ const useStyles = makeStyles((theme) => ({
 
 export default function DecryptedCertInfo(props) {
   const cls = useStyles();
-  const certificate = useSelector((state) => state.appSlice.decodedData.certificate.versions[0]);
-  const publicKeyHex65 = useSelector((state) => state.appSlice.decodedData.publicKeyHex65);
-  const [certPart1, certPart2] = separateCertificate(certificate.plain, certificate);
+  const newestCertVersion = useSelector((state) => state.appSlice.decodedData.certificate.versions[0]);
+  const [certPart1, certPart2] = separateCertificate(newestCertVersion.plain, newestCertVersion.txid);
   const dp = useDispatch();
+  const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
     checkIntegrity();
   }, []);
 
   async function checkIntegrity() {
-    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/check-integrity`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        txid: certificate.txid,
-        plain: certificate.plain,
-        publicKeyHex65,
-      }),
-    });
-    const result = await response.json();
-    if (!response.ok) {
-      console.log(result);
-    } else {
-      // result: {valid: true/false, timestamp: "12341234"}
-      setTimeout(() => {
-        dp(setCertIntegrityCheckResult(result));
-      }, 5000);
+    try {
+      const response = await axios.post("/check-integrity", {
+        txid: newestCertVersion.txid,
+        plain: newestCertVersion.plain,
+      });
+      dp(setCertIntegrityCheckResult(response.data));
+    } catch (error) {
+      enqueueSnackbar(JSON.stringify(error.response.data), ERR_TOP_CENTER);
     }
   }
 
@@ -67,9 +61,9 @@ export default function DecryptedCertInfo(props) {
           <Typography variant="h4" className={cls.typo}>
             Thông tin bằng cấp
           </Typography>
-          {certificate.valid === undefined && <CircularProgress size="1.5rem" />}
-          {certificate.valid === true && <CheckIcon color="primary" />}
-          {certificate.valid === false && <CloseIcon color="secondary" />}
+          {newestCertVersion.valid === undefined && <CircularProgress size="1.5rem" />}
+          {newestCertVersion.valid === true && <CheckIcon color="primary" />}
+          {newestCertVersion.valid === false && <CloseIcon color="secondary" />}
         </Box>
         <Divider></Divider>
         <Grid container>
@@ -102,7 +96,7 @@ function SimpleTable({ rows }) {
   );
 }
 
-function separateCertificate(cert, version) {
+function separateCertificate(cert, txid) {
   let certPart1 = {
     "Họ và tên": cert.name,
     "Ngày sinh": cert.birthday,
@@ -120,26 +114,7 @@ function separateCertificate(cert, version) {
     "Hiệu trưởng": cert.headmaster,
     // "Số hiệu": cert.regisno,
     "Số hiệu vào sổ": cert.globalregisno,
-    Txid: getLinkFromTxid(version.txid),
+    Txid: getLinkFromTxid(txid),
   };
   return [certPart1, certPart2];
 }
-
-// const certPart1 = {
-//   "Họ và tên": "Nguyễn Văn An",
-//   "Ngày sinh": "01/01/1998",
-//   "Nơi sinh": "Từ Sơn, Bắc Ninh",
-//   "Giới tính": "Nam",
-//   "Dân tộc": "Kinh",
-//   "Học sinh trường": "Trung học cơ sở Hương Mạc I",
-//   "Năm tốt nghiệp": "2016",
-// };
-
-// const certPart2 = {
-//   "Xếp loại tốt nghiệp": "Khá",
-//   "Hình thức đào tạo": "Chính quy",
-//   "Số hiệu": "A09050634",
-//   "Số vào sổ cấp bằng": "185",
-//   "Trưởng phòng GD&ĐT": "Nguyễn Văn Bình",
-//   Txid: "2443d2798645516f6d985347ba456ce6da416063952565d0a33d0d2009ee7a3f".substr(0, 20),
-// };

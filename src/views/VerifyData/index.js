@@ -22,7 +22,7 @@ export default function Result(props) {
   const dp = useDispatch();
 
   useEffect(() => {
-    runOffChainCheck();
+    // runOffChainCheck();
   }, []);
 
   function runOffChainCheck() {

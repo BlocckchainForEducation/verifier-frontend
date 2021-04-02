@@ -1,7 +1,9 @@
 import { makeStyles, TextField } from "@material-ui/core";
+import axios from "axios";
 import { useSnackbar } from "notistack";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
+import { ERR_TOP_CENTER } from "../../utils/snackbar-utils";
 import { setDecodedData } from "../redux";
 
 const useStyles = makeStyles((theme) => ({
@@ -40,20 +42,12 @@ export default function Verify(props) {
 
   async function hdPasteToken(e) {
     const token = e.clipboardData.getData("Text");
-    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/decode-token`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token }),
-    });
-    const result = await response.json();
-    if (!response.ok) {
-      enqueueSnackbar("Token không hợp lệ: " + JSON.stringify(result), {
-        variant: "error",
-        anchorOrigin: { vertical: "top", horizontal: "center" },
-      });
-    } else {
-      dp(setDecodedData(result));
+    try {
+      const response = await axios.post("/decode-token", { token });
+      dp(setDecodedData(response.data));
       navigate("/ket-qua");
+    } catch (error) {
+      enqueueSnackbar("Token không hợp lệ: " + JSON.stringify(error.response.data), ERR_TOP_CENTER);
     }
   }
 
