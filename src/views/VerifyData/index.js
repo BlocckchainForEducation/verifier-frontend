@@ -16,34 +16,34 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Result(props) {
+export default function VerifyDataResult(props) {
   const cls = useStyles();
-  const subjects = useSelector((state) => state.appSlice.decodedData.subjects);
+  // const subjects = useSelector((state) => state.appSlice.decodedToken.subjects);
   const dp = useDispatch();
 
   useEffect(() => {
     // runOffChainCheck();
   }, []);
 
-  function runOffChainCheck() {
-    let sumCredit = 0;
-    let sumPoint = 0;
-    subjects.forEach((subject, index) => {
-      const copyVersions = [...subject.versions];
-      copyVersions.sort((a, b) => b.timestamp - a.timestamp);
-      const newestVersion = copyVersions[0];
-      sumCredit += newestVersion.credit;
-      sumPoint += newestVersion.credit * newestVersion.pointBase4;
-    });
-    let CPA = sumPoint / sumCredit;
-    dp(setOffChainCheckResult({ sumCredit, CPA }));
-  }
+  // function runOffChainCheck() {
+  //   let sumCredit = 0;
+  //   let sumPoint = 0;
+  //   subjects.forEach((subject, index) => {
+  //     const copyVersions = [...subject.versions];
+  //     copyVersions.sort((a, b) => b.timestamp - a.timestamp);
+  //     const newestVersion = copyVersions[0];
+  //     sumCredit += newestVersion.credit;
+  //     sumPoint += newestVersion.credit * newestVersion.pointBase4;
+  //   });
+  //   let CPA = sumPoint / sumCredit;
+  //   dp(setOffChainCheckResult({ sumCredit, CPA }));
+  // }
 
   return (
     <View title="Kết quả xác thực">
       <div className={cls.root}>
         <DecryptedCertInfo></DecryptedCertInfo>
-        {/* <DecryptedSubjectTable></DecryptedSubjectTable> */}
+        <DecryptedSubjectTable></DecryptedSubjectTable>
       </div>
     </View>
   );

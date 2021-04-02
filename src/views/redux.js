@@ -3,7 +3,7 @@ const { createSlice } = require("@reduxjs/toolkit");
 const appSlice = createSlice({
   name: "appSlice",
   initialState: {
-    decodedData: {
+    decodedToken: {
       publicKeyHex: "",
       certificate: { address: "", versions: [{ txid: "", timestamp: 1234, active: "", plain: "" }] },
       subjects: [{ address: "", versions: [{ txid: "", timestamp: 1234, active: "", plain: "" }] }, {}],
@@ -19,12 +19,9 @@ const appSlice = createSlice({
       state.eduProgramOnBKC = action.payload.eduProgramOnBKC;
     },
 
-    setCertIntegrityCheckResult: (state, action) => {
-      state.decodedData.certificate.versions[0].valid = action.payload.valid;
-    },
     setSubjectIntegrityCheckResult: (state, action) => {
       const { subjectIndex, versionIndex, valid } = action.payload;
-      const version = state.decodedData.subjects[subjectIndex].versions[versionIndex];
+      const version = state.decodedToken.subjects[subjectIndex].versions[versionIndex];
       version.valid = valid;
       if (valid === false) {
         version.msg = action.payload.msg;
