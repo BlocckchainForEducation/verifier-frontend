@@ -33,7 +33,7 @@ export default function DecryptedVersion({ subjectIndex, version, versionIndex }
     <TableRow>
       <TableCell>{version.plain.semester}</TableCell>
       <TableCell>{version.plain.subject.subjectId}</TableCell>
-      <TableCell>{version.plain.subject.name}</TableCell>
+      <TableCell>{version.plain.subject.subjectName}</TableCell>
       <TableCell>{version.plain.subject.credit}</TableCell>
       <TableCell>{version.plain.halfSemesterPoint}</TableCell>
       <TableCell>{version.plain.finalSemesterPoint}</TableCell>

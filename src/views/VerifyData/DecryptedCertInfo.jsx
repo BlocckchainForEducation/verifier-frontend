@@ -12,15 +12,14 @@ import {
   TableRow,
   Typography,
 } from "@material-ui/core";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { setCertIntegrityCheckResult } from "../redux";
 import CheckIcon from "@material-ui/icons/Check";
 import CloseIcon from "@material-ui/icons/Close";
-import { getLinkFromTxid } from "src/utils/utils";
 import axios from "axios";
-import { ERR_TOP_CENTER } from "../../utils/snackbar-utils";
 import { useSnackbar } from "notistack";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { getLinkFromTxid } from "src/utils/utils";
+import { ERR_TOP_CENTER } from "../../utils/snackbar-utils";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -33,16 +32,17 @@ const useStyles = makeStyles((theme) => ({
 
 export default function DecryptedCertInfo(props) {
   const cls = useStyles();
-  // TODO: check if cert versions is sorted
-  const newestCertVersionByToken = useSelector((state) => state.appSlice.decodedToken.certificate.versions[0]);
+  // TODO: assum that the last one is the newest
+  const certVersions = useSelector((state) => state.appSlice.decodedToken.certificate.versions);
+  const newestCertVersionByToken = certVersions[certVersions.length - 1];
   const [certPart1, certPart2] = separateCertificate(newestCertVersionByToken.plain, newestCertVersionByToken.txid);
 
   const certVersionsOnBKC = useSelector((state) => state.appSlice.eduProgramOnBKC.certificate.versions);
   const correspondingCertVersionOnBKC = certVersionsOnBKC.find((version) => version.txid === newestCertVersionByToken.txid);
-  // console.log({ newestCertVersionByToken, correspondingCertVersionOnBKC });
-  // TODO: check if this sort is right?
-  const newestCertVersionOnBKC = certVersionsOnBKC.sort((a, b) => a.timestamp - b.timestamp)[0];
 
+  // TODO: check if this sort is right?
+  // const newestCertVersionOnBKC = certVersionsOnBKC.sort((a, b) => a.timestamp - b.timestamp)[0];
+  const newestCertVersionOnBKC = certVersionsOnBKC[certVersionsOnBKC.length - 1];
   const [isIntegrity, setIsIntegrity] = useState(null);
   const [isOutDate, setIsOutDate] = useState(null);
 
